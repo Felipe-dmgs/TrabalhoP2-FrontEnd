@@ -1,0 +1,38 @@
+.FightArea{
+    display: flex;
+    gap: 20px;
+}
+
+#char, #monster {
+    flex: 1;
+}
+
+.Lifebar{
+    height: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+.Lifebar .Bar {
+    height: inherit;
+    background-color: red;
+    border-radius: 5px;
+}
+
+.log {
+    border: 1px solid #999;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+.heroi {
+    color: blue;
+}
+.monster{
+    color: red;
+}
+.System{
+    color: green;
+}
+
+
