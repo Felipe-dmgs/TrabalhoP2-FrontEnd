@@ -264,44 +264,37 @@ class Stage {
         if (damage > actualDefense){
             attacked.life -= damage.toFixed(2);
             this.log.addMessage(`${attacking.name} causou ${damage.toFixed(2)} pontos de dano no ${attacked.name}`,`${this.classPerso}`);
-            // Sua lógica de "nova chance" (removi o 'return' para garantir a checagem de morte)
             if(damage < this.MediaDamage-10){
                 this.log.addMessage(`${attacking.name} é muito fraco e por isso terá uma nova chance`,"System");
                 this.DoAttack(attacking,attacked);
-                return; // Retorna aqui para evitar update duplicado
+                return;
             }
         } else {
             this.log.addMessage(`${attacked.name} conseguiu defender o ataque de ${attacking.name}`,`${this.defesa}`);
         }
-
-        // --- VERIFICAÇÃO DE MORTE (DEPOIS do ataque) ---
-        // Esta é a parte importante que mudou!
 
         if (this.fighter1.life <= 0) {
             // Jogador perdeu
             this.log.addMessage(`${this.fighter1.name} foi derrotado!`, "heroi");
             this.log.addMessage("GAME OVER.", "System");
             this.endGame();
-            this.update(); // Atualiza a UI uma última vez
+            this.update();
             return;
         }
 
         if (this.fighter2.life <= 0) {
-            // Monstro perdeu
-            // NÃO criamos um new Stage, chamamos nossa nova função:
             this.goToNextMonster();
-            return; // A função goToNextMonster já cuida do update()
+            return;
         }
-        if (this.fighter1.life > 0 && this.currentMonsterIndex < this.monsters.length) {
-            // Inverte o turno
-            this.turno = !this.turno;
-            
-            if(this.turno) { // Turno do Jogador
+        if (this.fighter1.life > 0 && this.currentMonsterIndex < this.monsters.length) 
+            if(this.turno) {
                 this.fighter1EL.querySelector(".AttackButton").disabled = false;
                 this.fighter2EL.querySelector(".AttackButton").disabled = true;
-            } else { // Turno do Monstro
+this.turno = false
+            } else {
                 this.fighter1EL.querySelector(".AttackButton").disabled = true;
                 this.fighter2EL.querySelector(".AttackButton").disabled = false;
+this.turno = true
             }
         }
         this.update();
