@@ -194,35 +194,35 @@ class Stage {
     goToNextMonster() {
         this.fighter1.life = this.fighter1.MaxLife
         this.log.addMessage(`${this.fighter2.name} foi derrotado!`, "System");
-        this.currentMonsterIndex++; // Avança para o próximo monstro
+        this.currentMonsterIndex++;
 
         if (this.currentMonsterIndex >= this.monsters.length) {
-            // VITÓRIA!
+            
             this.log.addMessage("PARABÉNS! Você derrotou todos os monstros!", "heroi");
             this.endGame();
         } else {
-            // Carrega o próximo monstro
+            
             this.fighter2 = this.monsters[this.currentMonsterIndex];
             this.log.addMessage(`Um novo oponente surge: ${this.fighter2.name}!`, "monster");
 
-            // Limpa e atualiza a imagem do monstro
+            
             let f2ImgContainer = this.fighter2EL.querySelector(".imgMonster");
-            f2ImgContainer.innerHTML = ''; // Limpa a imagem antiga
-            f2ImgContainer.appendChild(this.fighter2.image); // Adiciona a nova
+            f2ImgContainer.innerHTML = ''; 
+            f2ImgContainer.appendChild(this.fighter2.image);
 
-            // Reseta as estatísticas de dano do monstro
+            
             this.MonsterDamage = [];
 
-            // Garante que é o turno do jogador
+            
             this.turno = true;
             this.fighter1EL.querySelector(".AttackButton").disabled = false;
             this.fighter2EL.querySelector(".AttackButton").disabled = true;
 
-            this.update(); // Atualiza a UI com o novo monstro
+            this.update();
         }
     }
 
-    // NOVA FUNÇÃO para terminar o jogo
+    
     endGame() {
         this.fighter1EL.querySelector(".AttackButton").disabled = true;
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
@@ -230,7 +230,7 @@ class Stage {
     }
 
     DoAttack(attacking, attacked){
-        // Verifica se alguém que já está morto tenta fazer algo
+        
         if (attacking.life <= 0) { 
             this.log.addMessage("Morto não ataca", "System"); 
             return;
@@ -240,7 +240,6 @@ class Stage {
             return;
         }
 
-        // Lógica de ataque (sua lógica original, está ótima)
         let attackFactor = (Math.random() * 2).toFixed(2);
         let defenseFactor = (Math.random() * 2).toFixed(2);
         let damage = attacking.Attack * attackFactor;
