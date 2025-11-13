@@ -23,20 +23,71 @@ class Knight extends Character{
         this.life = 100;
         this.Attack = 10;
         this.Defense = 8;
-        this.MaxLife = this.life
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/hero.jpg";
+    }
+    get image(){
+        return this._image
     }
 }
 
 class Sorcerer extends Character{
     constructor(name){
         super(name);
-        this.life = 80;
-        this.Attack = 20;
+        this.life = 70;
+        this.Attack = 30;
         this.Defense = 3;
-        this.MaxLife = this.life
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/sorcerer.webp";
+    }
+    get image(){
+        return this._image
     }
 }
-
+class Ladino extends Character{
+    constructor(name){
+        super(name);
+        this.life = 90;
+        this.Attack = 20;
+        this.Defense = 5;
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/ladino.jpg";
+    }
+    get image(){
+        return this._image
+    }
+}
+class Lancer extends Character{
+    constructor(name){
+        super(name);
+        this.life = 100;
+        this.Attack = 15;
+        this.Defense = 6;
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/lancerHero.jpg";
+    }
+    get image(){
+        return this._image
+    }
+}
+class Archer extends Character{
+    constructor(name){
+        super(name);
+        this.life = 70;
+        this.Attack = 25;
+        this.Defense = 5;
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/ArcherHero.jpg";
+    }
+    get image(){
+        return this._image
+    }
+}
 
 class LittleMonster extends Character{
     constructor(){
@@ -44,7 +95,12 @@ class LittleMonster extends Character{
         this.life = 40;
         this.Attack = 4;
         this.Defense = 4;
-        this.MaxLife = this.life
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/littlemonster.jpg";
+    }
+    get image(){
+        return this._image
     }
 }
 
@@ -54,7 +110,26 @@ class BigMonster extends Character{
         this.life = 120;
         this.Attack = 20;
         this.Defense = 10;
-        this.MaxLife = this.life
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/BigMonhster.png";
+    }
+    get image(){
+        return this._image
+    }
+}
+class Boss extends Character{
+    constructor(){
+        super("Ganondorf")
+        this.life = 250;
+        this.Attack = 30;
+        this.Defense = 15;
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/Boss.jpg";
+    }
+    get image(){
+        return this._image
     }
 }
 
@@ -94,6 +169,18 @@ class Stage {
     }
 
     start(){
+
+        let f1ImgContainer = this.fighter1EL.querySelector(".imgHero"); 
+        let f2ImgContainer = this.fighter2EL.querySelector(".imgMonster");
+
+        // 2. Adicione a imagem (que já é um elemento <img> vindo do getter)
+        if (f1ImgContainer) {
+            f1ImgContainer.appendChild(this.fighter1.image); 
+        }
+        if (f2ImgContainer) {
+            f2ImgContainer.appendChild(this.fighter2.image);
+        }
+        
         this.update()
         this.fighter1EL.querySelector(".AttackButton").addEventListener("click", () => {
             this.DoAttack(this.fighter1,this.fighter2)
@@ -159,3 +246,35 @@ class Stage {
     }
 }
 
+class SelectHero {
+    constructor(){
+        this.personagens = [Knight, Sorcerer, Ladino, Archer, Lancer]
+    }
+
+    CreateSelection(objetolista, onSelectCallback){
+        objetolista.innerHTML = ""; 
+
+        this.personagens.forEach((HeroClass) => {
+            
+            const tempChar = new HeroClass("Temp"); 
+
+            const containerP = document.createElement("li"); 
+
+            containerP.className = "hero-card";
+
+            const img = document.createElement("img");
+            img.src = tempChar.image.src; 
+
+            const button = document.createElement("button");
+            button.innerHTML = `Escolher ${HeroClass.name}`; 
+
+            button.addEventListener('click', () => {
+                onSelectCallback(HeroClass); 
+            });
+
+            containerP.appendChild(img);
+            containerP.appendChild(button);
+            objetolista.appendChild(containerP);
+        });
+    }
+}
