@@ -286,18 +286,18 @@ class Stage {
             this.goToNextMonster();
             return;
         }
-        if (this.fighter1.life > 0 && this.currentMonsterIndex < this.monsters.length) 
+        if (this.fighter1.life > 0 && this.currentMonsterIndex < this.monsters.length) {
             if(this.turno) {
                 this.fighter1EL.querySelector(".AttackButton").disabled = false;
                 this.fighter2EL.querySelector(".AttackButton").disabled = true;
-this.turno = false
+                this.turno = false
             } else {
                 this.fighter1EL.querySelector(".AttackButton").disabled = true;
                 this.fighter2EL.querySelector(".AttackButton").disabled = false;
-this.turno = true
+                this.turno = true
             }
         }
-        this.update();
+        this.update()
     }
 
     update(){
