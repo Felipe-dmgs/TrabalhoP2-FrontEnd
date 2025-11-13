@@ -19,7 +19,7 @@ function startGame(SelectedHeroClass) {
     ];
     const stage = new Stage(
         char,
-        monsterList, // Passa o array de monstros
+        monsterList,
         document.querySelector("#char"),
         document.querySelector("#monster"),
         log
