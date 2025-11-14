@@ -146,12 +146,16 @@ class Log {
         this.list.push({ msg, classP });
         this.render();
     }
+    Reset(){
+        this.list = []
+    }
 
     render() {
         this.listEL.innerHTML = "";
         for (let item of this.list){
             this.listEL.innerHTML += `<li class="${item.classP}">${item.msg}</li>`;
         }
+        this.listEL.scrollTop = this.listEL.scrollHeight
     }
 }
 class Stage {
@@ -192,6 +196,7 @@ class Stage {
     }
 
     goToNextMonster() {
+        this.log.Reset()
         this.fighter1.life = this.fighter1.MaxLife
         this.log.addMessage(`${this.fighter2.name} foi derrotado!`, "System");
         this.currentMonsterIndex++;
@@ -265,9 +270,18 @@ class Stage {
             attacked.life -= damage.toFixed(2);
             this.log.addMessage(`${attacking.name} causou ${damage.toFixed(2)} pontos de dano no ${attacked.name}`,`${this.classPerso}`);
             if(damage < this.MediaDamage-10){
-                this.log.addMessage(`${attacking.name} é muito fraco e por isso terá uma nova chance`,"System");
-                this.DoAttack(attacking,attacked);
-                return;
+                if (this.fighter1.life <= 0) {
+                    // Tem essa verificação abaixo, porém se ele morrer para um ataque fraco vai acabar bugando desse jeito corrige
+                    this.log.addMessage(`${this.fighter1.name} foi derrotado!`, "heroi");
+                    this.log.addMessage("GAME OVER.", "System");
+                    this.endGame();
+                    this.update();
+                    return;
+                }else{
+                    this.log.addMessage(`${attacking.name} é muito fraco e por isso terá uma nova chance`,"System");
+                    this.DoAttack(attacking,attacked);
+                    return;
+                }
             }
         } else {
             this.log.addMessage(`${attacked.name} conseguiu defender o ataque de ${attacking.name}`,`${this.defesa}`);
@@ -314,7 +328,7 @@ class SelectHero {
         this.personagens = [Knight, Sorcerer, Ladino, Archer, Lancer]
     }
 
-    CreateSelection(objetolista, onSelectCallback){
+    CreateSelection(objetolista, FuncaoStart){
         objetolista.innerHTML = ""; 
 
         this.personagens.forEach((HeroClass) => {
@@ -332,7 +346,7 @@ class SelectHero {
             button.innerHTML = `Escolher ${HeroClass.name}`; 
 
             button.addEventListener('click', () => {
-                onSelectCallback(HeroClass); 
+                FuncaoStart(HeroClass); 
             });
 
             containerP.appendChild(img);
@@ -340,8 +354,173 @@ class SelectHero {
             objetolista.appendChild(containerP);
         });
     }
+}
 
+class SelectBuffs {
     CreateBuffSelection() {
-        /*Assim q a luta acabar abrira uma tela de buffs para a pessoa selecionar, tenho que criar uma lista com varios tipos de buff no geral vai ser ataque, vida, defesa vai ser em 1 desses 3 e sempre que o buff for selecionado o inimigo upara*/
+        this.buffsList = []
+        for(let i = 0; i < 3; i++){
+            buff = this.TipoBuff()
+            this.buffsList.push(buff)
+        }
+        this.buffsList.forEach((buff)=>{
+            const containerB = document.createElement("li"); 
+            containerB.className = "Buff-Card";
+            textoraridade = this.textoRaridade()
+            const button = document.createElement("button");
+            button.innerHTML = `+${buff.Valor} de ${buff.tipo} `; 
+            button.addEventListener('click', () =>{
+                //Aqui eu tenho que pegar o player e a partir das infos do objeto do buff aplica-la
+            })
+            containerB.append(textoraridade)
+            containerB.appendChild(buff.image)
+            containerB.appendChild(button)
+        })
     }
+
+    obterNumeroAleatorio(n1, n2) {
+    const min = Math.ceil(n1);
+    const max = Math.floor(n2);
+    return Math.floor(Math.random() * (max - min)) + min;
+    }
+    obterRaridade(){
+        numRaridade = this.obterNumeroAleatorio(0,20)
+        if (numRaridade <= 12){return "comum";}
+        else if(numRaridade <= 16) {return "raro"}
+        else if(numRaridade <= 19){return "épico"}
+        else if(numRaridade == 20){return "lendário"}
+    }   
+    obterTipo(){
+        numTipo = this.obterNumeroAleatorio(1,3)
+        if (numTipo == 1) {return "vida";}
+        else if(numTipo == 2){return "força";}
+        else if(numTipo == 3) {return "defesa";}
+    }
+    TipoBuff(){
+        raridade = obterRaridade();
+        tipo = obterTipo();
+        if(raridade == "lendário")
+        {
+            if(tipo == "vida"){
+                imgVida = document.createElement("img")
+                imgVida.src = "assets/Images/LifeBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": 100,
+                    "imagem": imgVida};}
+            else if(tipo == "força"){
+                imgForca = document.createElement("img")
+                imgForca.src = "assets/Images/AttackBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo, 
+                    "Valor": 20,
+                    "imagem":imgForca};}
+            else if(tipo == "defesa"){
+                imgDefesa = document.createElement("img")
+                imgDefesa.src = "assets/Images/DefenseBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": 30,
+                    "imagem":imgDefesa};}
+        }
+        else if(raridade == "épica"){
+            if(tipo == "vida"){
+                imgVida = document.createElement("img")
+                imgVida.src = "assets/Images/LifeBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": this.obterNumeroAleatorio(50,80),
+                    "imagem":imgVida};}
+            else if(tipo == "força"){
+                imgForca = document.createElement("img")
+                imgForca.src = "assets/Images/AttackBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": 15,
+                    "imagem":imgForca};}
+            else if(tipo == "defesa"){
+                imgDefesa = document.createElement("img")
+                imgDefesa.src = "assets/Images/DefenseBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor":  20,
+                    "imagem": imgDefesa};}
+        }else if(raridade == "raro"){
+            if(tipo == "vida"){
+                imgVida = document.createElement("img")
+                imgVida.src = "assets/Images/LifeBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": this.obterNumeroAleatorio(30,50),
+                    "imagem": imgVida}}
+            else if(tipo == "força"){
+                imgForca = document.createElement("img")
+                imgForca.src = "assets/Images/AttackBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": this.obterNumeroAleatorio(5,10),
+                    "imagem": imgForca}}
+            else if(tipo == "defesa"){
+                imgDefesa = document.createElement("img")
+                imgDefesa.src = "assets/Images/DefenseBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": this.obterNumeroAleatorio(7,12),
+                    "imagem": imgDefesa}}
+        }else if(raridade == "comum"){
+            if(tipo == "vida"){
+                imgVida = document.createElement("img")
+                imgVida.src = "assets/Images/LifeBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": this.obterNumeroAleatorio(20,30),
+                    "imagem": imgVida}}
+            else if(tipo == "força"){
+                imgForca = document.createElement("img")
+                imgForca.src = "assets/Images/AttackBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": this.obterNumeroAleatorio(3,5),
+                    "imagem": imgForca}}
+            else if(tipo == "defesa"){
+                imgDefesa = document.createElement("img")
+                imgDefesa.src = "assets/Images/DefenseBuff.png"
+                return {
+                    "Raridade": raridade,
+                    "Tipo":tipo,
+                    "Valor": this.obterNumeroAleatorio(3,7),
+                    "imagem": imgDefesa}}
+        }
+    }
+    textoRaridade(buff){
+        if(buff.raridade = "lendário")
+        {
+            const textoRaridade = document.createElement("p")
+            textoRaridade.innerHTML = "<p style.color = 'yellow'>Lendário</p>"
+        }else if(buff.raridade = "épica")
+        {
+            const textoRaridade = document.createElement("p")
+            textoRaridade.innerHTML = "<p style.color = 'purple'>Épica</p>"
+        }else if(buff.raridade = "raro")
+        {
+            const textoRaridade = document.createElement("p")
+            textoRaridade.innerHTML = "<p style.color = 'lightblue'>Raro</p>"
+        }else if(buff.raridade = "comum")
+        {
+            const textoRaridade = document.createElement("p")
+            textoRaridade.innerHTML = "<p style.color = 'gray'>Épica</p>"
+        }
+    }
+
 }

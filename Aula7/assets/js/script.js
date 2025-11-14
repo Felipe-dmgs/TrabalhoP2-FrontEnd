@@ -3,14 +3,14 @@ const fightArena = document.querySelector(".FightArea");
 const logElement = document.querySelector(".log");
 const log = new Log(logElement);
 
-function startGame(SelectedHeroClass) {
+function startGame(ClasseSelecionada) {
     selectionScreen.style.display = "none";
     fightArena.style.display = "flex"; 
     logElement.style.display = "block"; 
-    let charName = prompt(`Qual o nome do seu ${SelectedHeroClass.name}?`, "Herói");
-    if (!charName) { charName = SelectedHeroClass.name; }
+    let charName = prompt(`Qual o nome do seu ${ClasseSelecionada.name}?`, "Herói");
+    if (!charName) { charName = ClasseSelecionada.name; }
     
-    let char = new SelectedHeroClass(charName);
+    let char = new ClasseSelecionada(charName);
 
     let monsterList = [
         new LittleMonster(),
