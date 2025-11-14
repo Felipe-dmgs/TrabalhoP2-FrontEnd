@@ -160,7 +160,7 @@ class Log {
 }
 class Stage {
 
-    constructor(fighter1, monsters, fighter1EL, fighter2EL, logObject){
+    constructor(fighter1, monsters, fighter1EL, fighter2EL, logObject, buffSelector, buffScreenEL, buffListEL, fightArena){   
         this.fighter1 = fighter1;
         this.monsters = monsters; 
         this.currentMonsterIndex = 0; 
@@ -173,6 +173,10 @@ class Stage {
         this.MonsterDamage = [];
         this.MediaDamage = 0;
         this.classPerso = '';
+        this.buffSelector = buffSelector;
+        this.buffScreenEL = buffScreenEL;
+        this.buffListEL = buffListEL;
+        this.fightArena = fightArena;
     }
 
     start(){
@@ -196,35 +200,55 @@ class Stage {
     }
 
     goToNextMonster() {
-        this.log.Reset()
-        this.fighter1.life = this.fighter1.MaxLife
         this.log.addMessage(`${this.fighter2.name} foi derrotado!`, "System");
         this.currentMonsterIndex++;
 
         if (this.currentMonsterIndex >= this.monsters.length) {
-            
             this.log.addMessage("PARABÉNS! Você derrotou todos os monstros!", "heroi");
             this.endGame();
+
         } else {
-            
-            this.fighter2 = this.monsters[this.currentMonsterIndex];
-            this.log.addMessage(`Um novo oponente surge: ${this.fighter2.name}!`, "monster");
-
-            
-            let f2ImgContainer = this.fighter2EL.querySelector(".imgMonster");
-            f2ImgContainer.innerHTML = ''; 
-            f2ImgContainer.appendChild(this.fighter2.image);
-
-            
-            this.MonsterDamage = [];
-
-            
-            this.turno = true;
-            this.fighter1EL.querySelector(".AttackButton").disabled = false;
-            this.fighter2EL.querySelector(".AttackButton").disabled = true;
-
-            this.update();
+            this.log.addMessage(`Escolha um buff para se preparar!`, "System");
+            this.fightArena.style.display = "none";
+            this.buffScreenEL.style.display = "block"; 
+            const handleBuffSelection = (buff) => {
+                if (buff.Tipo === "vida") {
+                    this.fighter1.MaxLife += buff.Valor;
+                    this.fighter1.life += buff.Valor; 
+                    this.log.addMessage(`BUFF: +${buff.Valor} de Vida!`, "heroi");
+                } else if (buff.Tipo === "força") {
+                    this.fighter1.Attack += buff.Valor;
+                    this.log.addMessage(`BUFF: +${buff.Valor} de Força!`, "heroi");
+                } else if (buff.Tipo === "defesa") {
+                    this.fighter1.Defense += buff.Valor;
+                    this.log.addMessage(`BUFF: +${buff.Valor} de Defesa!`, "heroi");
+                }
+                this.buffScreenEL.style.display = "none";
+                this.resumeNextMonster();
+            };
+            this.buffSelector.CreateBuffSelection(this.buffListEL, handleBuffSelection);
         }
+    }
+
+    resumeNextMonster() {
+        this.log.Reset();
+        this.fighter1.life = this.fighter1.MaxLife; 
+        
+        this.fighter2 = this.monsters[this.currentMonsterIndex];
+        this.log.addMessage(`Um novo oponente surge: ${this.fighter2.name}!`, "monster");
+
+        this.fightArena.style.display = "flex";
+
+        let f2ImgContainer = this.fighter2EL.querySelector(".imgMonster");
+        f2ImgContainer.innerHTML = '';
+        f2ImgContainer.appendChild(this.fighter2.image);
+
+        this.MonsterDamage = [];
+        this.turno = true;
+        this.fighter1EL.querySelector(".AttackButton").disabled = false;
+        this.fighter2EL.querySelector(".AttackButton").disabled = true;
+
+        this.update();
     }
 
     
@@ -357,170 +381,177 @@ class SelectHero {
 }
 
 class SelectBuffs {
-    CreateBuffSelection() {
-        this.buffsList = []
-        for(let i = 0; i < 3; i++){
-            buff = this.TipoBuff()
-            this.buffsList.push(buff)
-        }
-        this.buffsList.forEach((buff)=>{
-            const containerB = document.createElement("li"); 
-            containerB.className = "Buff-Card";
-            textoraridade = this.textoRaridade()
-            const button = document.createElement("button");
-            button.innerHTML = `+${buff.Valor} de ${buff.tipo} `; 
-            button.addEventListener('click', () =>{
-                //Aqui eu tenho que pegar o player e a partir das infos do objeto do buff aplica-la
-            })
-            containerB.append(textoraridade)
-            containerB.appendChild(buff.image)
-            containerB.appendChild(button)
-        })
-    }
-
     obterNumeroAleatorio(n1, n2) {
     const min = Math.ceil(n1);
     const max = Math.floor(n2);
     return Math.floor(Math.random() * (max - min)) + min;
     }
     obterRaridade(){
-        numRaridade = this.obterNumeroAleatorio(0,20)
+        let numRaridade = this.obterNumeroAleatorio(0,21)
         if (numRaridade <= 12){return "comum";}
         else if(numRaridade <= 16) {return "raro"}
         else if(numRaridade <= 19){return "épico"}
         else if(numRaridade == 20){return "lendário"}
     }   
     obterTipo(){
-        numTipo = this.obterNumeroAleatorio(1,3)
+        let numTipo = this.obterNumeroAleatorio(1,4)
         if (numTipo == 1) {return "vida";}
         else if(numTipo == 2){return "força";}
         else if(numTipo == 3) {return "defesa";}
     }
-    TipoBuff(){
-        raridade = obterRaridade();
-        tipo = obterTipo();
-        if(raridade == "lendário")
-        {
+    TipoBuff() {
+        const raridade = this.obterRaridade();
+        const tipo = this.obterTipo();
+        
+        if(raridade == "lendário") {
             if(tipo == "vida"){
-                imgVida = document.createElement("img")
+                let imgVida = document.createElement("img")
                 imgVida.src = "assets/Images/LifeBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": 100,
-                    "imagem": imgVida};}
-            else if(tipo == "força"){
-                imgForca = document.createElement("img")
+                    "imagem": imgVida};
+            } else if(tipo == "força"){
+                let imgForca = document.createElement("img")
                 imgForca.src = "assets/Images/AttackBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo, 
                     "Valor": 20,
-                    "imagem":imgForca};}
-            else if(tipo == "defesa"){
-                imgDefesa = document.createElement("img")
+                    "imagem":imgForca};
+            } else if(tipo == "defesa"){
+                let imgDefesa = document.createElement("img")
                 imgDefesa.src = "assets/Images/DefenseBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": 30,
-                    "imagem":imgDefesa};}
-        }
-        else if(raridade == "épica"){
+                    "imagem":imgDefesa};
+            }
+        } else if(raridade == "épico") {
             if(tipo == "vida"){
-                imgVida = document.createElement("img")
+                let imgVida = document.createElement("img")
                 imgVida.src = "assets/Images/LifeBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(50,80),
-                    "imagem":imgVida};}
-            else if(tipo == "força"){
-                imgForca = document.createElement("img")
+                    "imagem":imgVida};
+            } else if(tipo == "força"){
+                let imgForca = document.createElement("img")
                 imgForca.src = "assets/Images/AttackBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": 15,
-                    "imagem":imgForca};}
-            else if(tipo == "defesa"){
-                imgDefesa = document.createElement("img")
+                    "imagem":imgForca};
+            } else if(tipo == "defesa"){
+                let imgDefesa = document.createElement("img")
                 imgDefesa.src = "assets/Images/DefenseBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor":  20,
-                    "imagem": imgDefesa};}
-        }else if(raridade == "raro"){
+                    "imagem": imgDefesa};
+            }
+        } else if(raridade == "raro") {
             if(tipo == "vida"){
-                imgVida = document.createElement("img")
+                let imgVida = document.createElement("img")
                 imgVida.src = "assets/Images/LifeBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(30,50),
-                    "imagem": imgVida}}
-            else if(tipo == "força"){
-                imgForca = document.createElement("img")
+                    "imagem": imgVida}; // <-- SÓ UMA CHAVE
+            } else if(tipo == "força"){
+                let imgForca = document.createElement("img")
                 imgForca.src = "assets/Images/AttackBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(5,10),
-                    "imagem": imgForca}}
-            else if(tipo == "defesa"){
-                imgDefesa = document.createElement("img")
+                    "imagem": imgForca}; // <-- SÓ UMA CHAVE
+            } else if(tipo == "defesa"){
+                let imgDefesa = document.createElement("img")
                 imgDefesa.src = "assets/Images/DefenseBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(7,12),
-                    "imagem": imgDefesa}}
-        }else if(raridade == "comum"){
+                    "imagem": imgDefesa}; // <-- SÓ UMA CHAVE
+            }
+        } else if(raridade == "comum") {
             if(tipo == "vida"){
-                imgVida = document.createElement("img")
+                let imgVida = document.createElement("img")
                 imgVida.src = "assets/Images/LifeBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(20,30),
-                    "imagem": imgVida}}
-            else if(tipo == "força"){
-                imgForca = document.createElement("img")
+                    "imagem": imgVida};
+            } else if(tipo == "força"){
+                let imgForca = document.createElement("img")
                 imgForca.src = "assets/Images/AttackBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(3,5),
-                    "imagem": imgForca}}
-            else if(tipo == "defesa"){
-                imgDefesa = document.createElement("img")
+                    "imagem": imgForca};
+            } else if(tipo == "defesa"){
+                let imgDefesa = document.createElement("img")
                 imgDefesa.src = "assets/Images/DefenseBuff.png"
                 return {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(3,7),
-                    "imagem": imgDefesa}}
+                    "imagem": imgDefesa};
+            }
         }
     }
-    textoRaridade(buff){
-        if(buff.raridade = "lendário")
-        {
-            const textoRaridade = document.createElement("p")
-            textoRaridade.innerHTML = "<p style.color = 'yellow'>Lendário</p>"
-        }else if(buff.raridade = "épica")
-        {
-            const textoRaridade = document.createElement("p")
-            textoRaridade.innerHTML = "<p style.color = 'purple'>Épica</p>"
-        }else if(buff.raridade = "raro")
-        {
-            const textoRaridade = document.createElement("p")
-            textoRaridade.innerHTML = "<p style.color = 'lightblue'>Raro</p>"
-        }else if(buff.raridade = "comum")
-        {
-            const textoRaridade = document.createElement("p")
-            textoRaridade.innerHTML = "<p style.color = 'gray'>Épica</p>"
+    textoRaridade(buff) {
+        const textoRaridade = document.createElement("p");
+        
+        if (buff.Raridade === "lendário") {
+            textoRaridade.innerHTML = "Lendário";
+            textoRaridade.style.color = 'orange'; 
+        } else if (buff.Raridade === "épica") {
+            textoRaridade.innerHTML = "Épico";
+            textoRaridade.style.color = 'purple';
+        } else if (buff.Raridade === "raro") {
+            textoRaridade.innerHTML = "Raro";
+            textoRaridade.style.color = 'blue';
+        } else if (buff.Raridade === "comum") {
+            textoRaridade.innerHTML = "Comum";
+            textoRaridade.style.color = 'gray';
         }
+        return textoRaridade;
     }
+    CreateBuffSelection(buffContainerElement, onBuffSelectedCallback) {
+        buffContainerElement.innerHTML = ""; 
+        this.buffsList = [];
 
+        for (let i = 0; i < 3; i++) {
+            let buff = this.TipoBuff();
+            this.buffsList.push(buff);
+        }
+
+        this.buffsList.forEach((buff) => {
+            const containerB = document.createElement("li");
+            containerB.className = "Buff-Card";
+            const textoraridade = this.textoRaridade(buff);
+
+            const button = document.createElement("button");
+            button.innerHTML = `+${buff.Valor} de ${buff.Tipo}`;
+
+            button.addEventListener('click', () => {
+                onBuffSelectedCallback(buff);
+            });
+
+            containerB.append(textoraridade);
+            containerB.appendChild(buff.imagem);
+            containerB.appendChild(button);
+            buffContainerElement.appendChild(containerB);
+        });
+    }
 }
