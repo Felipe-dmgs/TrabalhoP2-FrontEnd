@@ -160,7 +160,7 @@ class Log {
 }
 class Stage {
 
-    constructor(fighter1, monsters, fighter1EL, fighter2EL, logObject, buffSelector, buffScreenEL, buffListEL, fightArena){   
+    constructor(fighter1, monsters, fighter1EL, fighter2EL, logObject, buffSelector, buffScreenEL, buffListEL, fightArena, BossIntroGifEL){   
         this.fighter1 = fighter1;
         this.monsters = monsters; 
         this.currentMonsterIndex = 0; 
@@ -179,6 +179,8 @@ class Stage {
         this.fightArena = fightArena;
         this.isAutoMode = false;       
         this.autoBattleInterval = null;
+        this.bossIntroGifEL = BossIntroGifEL;
+        this.bossGifSrc = "assets/Images/GanondorfEntering.webp";
     }
 
     start(){
@@ -199,6 +201,18 @@ class Stage {
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
 
         this.update()
+    }
+
+    playBossIntroGif() {
+        this.fightArena.style.display = "none";
+        this.buffScreenEL.style.display = "none";
+        const imgElement = this.bossIntroGifEL.querySelector("img");
+        imgElement.src = this.bossGifSrc;
+        this.bossIntroGifEL.style.display = "flex";
+        setTimeout(() => {
+            this.bossIntroGifEL.style.display = "none"; 
+            this.resumeNextMonster();
+        }, 2000);
     }
 
     toggleAutoMode() {
@@ -240,6 +254,11 @@ class Stage {
             this.log.Reset();
             if (this.isAutoMode) {
                 this.toggleAutoMode();
+            }
+            if (this.monsters[this.currentMonsterIndex] instanceof Boss) {
+                this.log.addMessage("Uma aura maligna preenche o ar... O grande demônio surge!", "Monster");
+                this.playBossIntroGif();
+                return; 
             }
             this.log.addMessage(`Escolha um buff para se preparar!`, "System");
             this.fightArena.style.display = "none";

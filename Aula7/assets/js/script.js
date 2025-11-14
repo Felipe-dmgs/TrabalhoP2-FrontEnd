@@ -5,6 +5,7 @@ const buffScreen = document.querySelector(".BuffScreen");
 const buffListElement = document.querySelector("#buff-list");
 const log = new Log(logElement);
 const buffSelector = new SelectBuffs();
+const bossIntroGifEL = document.querySelector("#boss-intro-gif")
 
 function startGame(ClasseSelecionada) {
     selectionScreen.style.display = "none";
@@ -30,7 +31,8 @@ function startGame(ClasseSelecionada) {
         buffSelector,
         buffScreen,
         buffListElement,
-        fightArena
+        fightArena,
+        bossIntroGifEL
     );
     stage.start();
 }
@@ -38,5 +40,6 @@ function startGame(ClasseSelecionada) {
 fightArena.style.display = "none";
 logElement.style.display = "none";
 buffScreen.style.display = "none"; 
+bossIntroGifEL.style.display = "none";
 const heroSelector = new SelectHero();
 heroSelector.CreateSelection(selectionScreen, startGame);
