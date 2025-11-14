@@ -177,6 +177,8 @@ class Stage {
         this.buffScreenEL = buffScreenEL;
         this.buffListEL = buffListEL;
         this.fightArena = fightArena;
+        this.isAutoMode = false;       
+        this.autoBattleInterval = null;
     }
 
     start(){
@@ -191,7 +193,7 @@ class Stage {
         this.fighter2EL.querySelector(".AttackButton").addEventListener("click", () => {
             this.DoAttack(this.fighter2, this.fighter1);
         });
-
+        this.fighter1EL.querySelector(".AutoButton").addEventListener("click", () => this.toggleAutoMode());
         this.turno = true;
         this.fighter1EL.querySelector(".AttackButton").disabled = false;
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
@@ -199,21 +201,52 @@ class Stage {
         this.update()
     }
 
+    toggleAutoMode() {
+        this.isAutoMode = !this.isAutoMode;
+
+        if (this.isAutoMode) {
+            this.log.addMessage("Modo Automático ATIVADO", "System");
+            this.fighter1EL.querySelector(".AttackButton").disabled = true;
+            this.autoBattleInterval = setInterval(() => {
+                
+                if (this.fighter1.life <= 0 || this.fighter2.life <= 0) {
+                    this.toggleAutoMode(); 
+                    return;
+                }
+                if (this.turno) {
+                    this.DoAttack(this.fighter1, this.fighter2);
+                } else {
+                    this.DoAttack(this.fighter2, this.fighter1);
+                }
+            }, 1000);
+        } else {
+            this.log.addMessage("Modo Automático DESATIVADO", "System");
+            if (this.autoBattleInterval) {
+                clearInterval(this.autoBattleInterval);
+                this.autoBattleInterval = null;
+            }
+            if (this.turno) {
+                this.fighter1EL.querySelector(".AttackButton").disabled = false;
+            }
+        }
+    }
     goToNextMonster() {
         this.log.addMessage(`${this.fighter2.name} foi derrotado!`, "System");
         this.currentMonsterIndex++;
-
         if (this.currentMonsterIndex >= this.monsters.length) {
-            this.log.addMessage("PARABÉNS! Você derrotou todos os monstros!", "heroi");
+            this.log.addMessage("PARABÉNS! Você derrotou todos os monstros!", "System");
             this.endGame();
-
         } else {
+            this.log.Reset();
+            if (this.isAutoMode) {
+                this.toggleAutoMode();
+            }
             this.log.addMessage(`Escolha um buff para se preparar!`, "System");
             this.fightArena.style.display = "none";
             this.buffScreenEL.style.display = "block"; 
             const handleBuffSelection = (buff) => {
                 if (buff.Tipo === "vida") {
-                    this.fighter1.MaxLife += buff.Valor;
+                    this.fighter1.MaxLife = parseFloat(this.fighter1.MaxLife) + buff.Valor;
                     this.fighter1.life += buff.Valor; 
                     this.log.addMessage(`BUFF: +${buff.Valor} de Vida!`, "heroi");
                 } else if (buff.Tipo === "força") {
@@ -230,8 +263,13 @@ class Stage {
         }
     }
 
+    AutoMode() {
+        this.AutoMode = !this.AutoMode
+        while(this.AutoMode){this.DoAttack(this.fighter1, this.fighter2); setTimeout(() => {this.DoAttack(this.fighter2, this.fighter1);})}
+    }
+
     resumeNextMonster() {
-        this.log.Reset();
+        this.update();
         this.fighter1.life = this.fighter1.MaxLife; 
         
         this.fighter2 = this.monsters[this.currentMonsterIndex];
@@ -262,11 +300,9 @@ class Stage {
         
         if (attacking.life <= 0) { 
             this.log.addMessage("Morto não ataca", "System"); 
-            return;
         }
         if (attacked.life <= 0) {
             this.log.addMessage("Você está atacando um morto", "System");
-            return;
         }
 
         let attackFactor = (Math.random() * 2).toFixed(2);
@@ -295,7 +331,6 @@ class Stage {
             this.log.addMessage(`${attacking.name} causou ${damage.toFixed(2)} pontos de dano no ${attacked.name}`,`${this.classPerso}`);
             if(damage < this.MediaDamage-10){
                 if (this.fighter1.life <= 0) {
-                    // Tem essa verificação abaixo, porém se ele morrer para um ataque fraco vai acabar bugando desse jeito corrige
                     this.log.addMessage(`${this.fighter1.name} foi derrotado!`, "heroi");
                     this.log.addMessage("GAME OVER.", "System");
                     this.endGame();
