@@ -180,7 +180,6 @@ class Stage {
         this.isAutoMode = false;       
         this.autoBattleInterval = null;
         this.bossIntroGifEL = BossIntroGifEL;
-        this.bossGifSrc = "assets/Images/GanondorfEntering.webp";
     }
 
     start(){
@@ -188,6 +187,7 @@ class Stage {
         this.fighter2EL.querySelector(".imgMonster").innerHTML = '';
         this.fighter1EL.querySelector(".imgHero").appendChild(this.fighter1.image); 
         this.fighter2EL.querySelector(".imgMonster").appendChild(this.fighter2.image);
+        document.querySelector(".statusHero").innerHTML = `Força: ${this.fighter1.Attack} | Defesa: ${this.fighter1.Defense}`;
         
         this.fighter1EL.querySelector(".AttackButton").addEventListener("click", () => {
             this.DoAttack(this.fighter1, this.fighter2);
@@ -207,11 +207,10 @@ class Stage {
         this.fightArena.style.display = "none";
         this.buffScreenEL.style.display = "none";
         const imgElement = this.bossIntroGifEL.querySelector("img");
-        imgElement.src = this.bossGifSrc;
+        imgElement.src = "assets/Images/GanondorfEntering.webp";
         this.bossIntroGifEL.style.display = "flex";
         setTimeout(() => {
             this.bossIntroGifEL.style.display = "none"; 
-            this.resumeNextMonster();
         }, 2000);
     }
 
@@ -255,11 +254,6 @@ class Stage {
             if (this.isAutoMode) {
                 this.toggleAutoMode();
             }
-            if (this.monsters[this.currentMonsterIndex] instanceof Boss) {
-                this.log.addMessage("Uma aura maligna preenche o ar... O grande demônio surge!", "Monster");
-                this.playBossIntroGif();
-                return; 
-            }
             this.log.addMessage(`Escolha um buff para se preparar!`, "System");
             this.fightArena.style.display = "none";
             this.buffScreenEL.style.display = "block"; 
@@ -276,9 +270,11 @@ class Stage {
                     this.log.addMessage(`BUFF: +${buff.Valor} de Defesa!`, "heroi");
                 }
                 this.buffScreenEL.style.display = "none";
+                document.querySelector(".statusHero").innerHTML = `Força: ${this.fighter1.Attack} | Defesa: ${this.fighter1.Defense}`;
                 this.resumeNextMonster();
             };
             this.buffSelector.CreateBuffSelection(this.buffListEL, handleBuffSelection);
+            
         }
     }
 
@@ -292,6 +288,10 @@ class Stage {
         this.fighter1.life = this.fighter1.MaxLife; 
         
         this.fighter2 = this.monsters[this.currentMonsterIndex];
+        if (this.monsters[this.currentMonsterIndex] instanceof Boss) {
+                this.log.addMessage("Uma aura maligna preenche o ar... O grande demônio surge!", "Monster");
+                this.playBossIntroGif();
+            }
         this.log.addMessage(`Um novo oponente surge: ${this.fighter2.name}!`, "monster");
 
         this.fightArena.style.display = "flex";
@@ -517,7 +517,7 @@ class SelectBuffs {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(30,50),
-                    "imagem": imgVida}; // <-- SÓ UMA CHAVE
+                    "imagem": imgVida}; 
             } else if(tipo == "força"){
                 let imgForca = document.createElement("img")
                 imgForca.src = "assets/Images/AttackBuff.png"
@@ -525,7 +525,7 @@ class SelectBuffs {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(5,10),
-                    "imagem": imgForca}; // <-- SÓ UMA CHAVE
+                    "imagem": imgForca};
             } else if(tipo == "defesa"){
                 let imgDefesa = document.createElement("img")
                 imgDefesa.src = "assets/Images/DefenseBuff.png"
@@ -533,7 +533,7 @@ class SelectBuffs {
                     "Raridade": raridade,
                     "Tipo":tipo,
                     "Valor": this.obterNumeroAleatorio(7,12),
-                    "imagem": imgDefesa}; // <-- SÓ UMA CHAVE
+                    "imagem": imgDefesa}; 
             }
         } else if(raridade == "comum") {
             if(tipo == "vida"){
