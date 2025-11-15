@@ -21,9 +21,9 @@ class Character{
 class Knight extends Character{
     constructor(name){
         super(name);
-        this.life = 100;
-        this.Attack = 10;
-        this.Defense = 8;
+        this.life = 110;
+        this.Attack = 20;
+        this.Defense = 15;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/hero.jpg";
@@ -51,7 +51,7 @@ class Ladino extends Character{
     constructor(name){
         super(name);
         this.life = 90;
-        this.Attack = 20;
+        this.Attack = 25;
         this.Defense = 5;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
@@ -65,8 +65,8 @@ class Lancer extends Character{
     constructor(name){
         super(name);
         this.life = 100;
-        this.Attack = 15;
-        this.Defense = 6;
+        this.Attack = 20;
+        this.Defense = 20;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/lancerHero.jpg";
@@ -80,7 +80,7 @@ class Archer extends Character{
         super(name);
         this.life = 70;
         this.Attack = 25;
-        this.Defense = 5;
+        this.Defense = 10;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/ArcherHero.jpg";
@@ -104,13 +104,40 @@ class LittleMonster extends Character{
         return this._image
     }
 }
-
+class BatMonster extends Character{
+    constructor(){
+        super("Bat monster")
+        this.life = 60;
+        this.Attack = 12;
+        this.Defense = 20;
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/BatMonster.png";
+    }
+    get image(){
+        return this._image
+    }
+}
+class Lizard extends Character{
+    constructor(){
+        super("Lizard")
+        this.life = 120;
+        this.Attack = 24;
+        this.Defense = 36;
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/LizardMonster.png";
+    }
+    get image(){
+        return this._image
+    }
+}
 class BigMonster extends Character{
     constructor(){
         super("Big Monster")
-        this.life = 120;
-        this.Attack = 20;
-        this.Defense = 10;
+        this.life = 150;
+        this.Attack = 25;
+        this.Defense = 30;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/BigMonster.png";
@@ -119,12 +146,28 @@ class BigMonster extends Character{
         return this._image
     }
 }
+class Lynel extends Character{
+    constructor(){
+        super("Lynel")
+        this.life = 180;
+        this.Attack = 40;
+        this.Defense = 35;
+        this.MaxLife = this.life;
+        this._image = document.createElement("img");
+        this._image.src = "assets/Images/LynelMonster.png";
+    }
+    get image(){
+        return this._image
+    }
+}
+
+
 class Boss extends Character{
     constructor(){
         super("Ganondorf")
-        this.life = 250;
-        this.Attack = 30;
-        this.Defense = 15;
+        this.life = 230;
+        this.Attack = 45;
+        this.Defense = 45;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/Boss.jpg";
@@ -312,6 +355,7 @@ class Stage {
     endGame() {
         this.fighter1EL.querySelector(".AttackButton").disabled = true;
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
+        this.log.addMessage(`Você deu um total de ${this.PlayerDamage.reduce((acumulador, valorAtual) => acumulador + valorAtual, 0).toFixed(2)} com uma média de ${(this.PlayerDamage.reduce((acumulador, valorAtual) => acumulador + valorAtual, 0)/this.PlayerDamage.length).toFixed(2)} dano por hit`)
         this.log.addMessage("FIM DE JOGO. Atualize a página para jogar novamente.", "System");
     }
 
@@ -569,7 +613,7 @@ class SelectBuffs {
         if (buff.Raridade === "lendário") {
             textoRaridade.innerHTML = "Lendário";
             textoRaridade.style.color = 'orange'; 
-        } else if (buff.Raridade === "épica") {
+        } else if (buff.Raridade === "épico") {
             textoRaridade.innerHTML = "Épico";
             textoRaridade.style.color = 'purple';
         } else if (buff.Raridade === "raro") {

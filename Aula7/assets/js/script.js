@@ -11,14 +11,17 @@ function startGame(ClasseSelecionada) {
     selectionScreen.style.display = "none";
     fightArena.style.display = "flex"; 
     logElement.style.display = "block"; 
-    let charName = prompt(`Qual o nome do seu ${ClasseSelecionada.name}?`, "Herói");
+    let charName = prompt(`Qual o nome do seu ${ClasseSelecionada.name}?`, `${ClasseSelecionada.name}`);
     if (!charName) { charName = ClasseSelecionada.name; }
     
     let char = new ClasseSelecionada(charName);
 
     let monsterList = [
         new LittleMonster(),
+        new BatMonster(),
+        new Lizard(),
         new BigMonster(),
+        new Lynel(),
         new Boss()
     ];
 
