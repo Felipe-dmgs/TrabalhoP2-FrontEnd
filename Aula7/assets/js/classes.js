@@ -198,7 +198,7 @@ class Log {
         for (let item of this.list){
             this.listEL.innerHTML += `<li class="${item.classP}">${item.msg}</li>`;
         }
-        this.listEL.scrollTop = this.listEL.scrollHeight
+        //this.listEL.scrollTop = this.listEL.scrollHeight
     }
 }
 class Stage {
@@ -224,7 +224,7 @@ class Stage {
         this.autoBattleInterval = null;
         this.bossIntroGifEL = BossIntroGifEL;
         this.TituloFase = document.querySelector(".stage-number")
-        this.DarkModeButton = document.querySelector("#dark-mode-toggle");
+        this.navbar = document.querySelector(".navbar");
     }
 
     start(){
@@ -244,12 +244,12 @@ class Stage {
         this.turno = true;
         this.fighter1EL.querySelector(".AttackButton").disabled = false;
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
-        this.DarkModeButton.addEventListener("click", () => {document.body.classList.toggle("dark-mode");})
         this.update()
     }
 
     playBossIntroGif() {
         this.fightArena.style.display = "none";
+        this.navbar.style.display = "none";
         this.buffScreenEL.style.display = "none";
         this.TituloFase.innerHTML = "Fase Final"
         const imgElement = this.bossIntroGifEL.querySelector("img");
@@ -257,7 +257,9 @@ class Stage {
         this.bossIntroGifEL.style.display = "flex";
         setTimeout(() => {
             this.bossIntroGifEL.style.display = "none"; 
+            this.navbar.style.display = "flex";
         }, 2000);
+        
     }
 
     toggleAutoMode() {

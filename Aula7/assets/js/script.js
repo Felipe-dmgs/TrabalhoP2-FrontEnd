@@ -6,7 +6,8 @@ const buffListElement = document.querySelector("#buff-list");
 const log = new Log(logElement);
 const buffSelector = new SelectBuffs();
 const bossIntroGifEL = document.querySelector("#boss-intro-gif")
-
+const DarkModeButton = document.querySelector("#dark-mode-toggle");
+DarkModeButton.addEventListener("click", () => {document.body.classList.toggle("dark-mode");})
 function startGame(ClasseSelecionada) {
     selectionScreen.style.display = "none";
     fightArena.style.display = "flex"; 
