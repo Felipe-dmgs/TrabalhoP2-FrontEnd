@@ -217,7 +217,8 @@ nav {
 
 .AttackButton,
 .AutoButton,
-.hero-card button {
+.hero-card button,
+.botao-escolha {
     background-color: #E67E22;
     color: white;
     
@@ -235,7 +236,8 @@ nav {
 
 .AttackButton:hover,
 .AutoButton:hover,
-.hero-card button {
+.hero-card button:hover,
+.botao-escolha:hover {
     background-color: #D35400; 
 }
 

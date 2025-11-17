@@ -650,6 +650,7 @@ class SelectBuffs {
             button.addEventListener('click', () => {
                 onBuffSelectedCallback(buff);
             });
+            button.classList.add("botao-escolha");
 
             containerB.append(textoraridade);
             containerB.appendChild(buff.imagem);
