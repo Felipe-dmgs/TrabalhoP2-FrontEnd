@@ -44,23 +44,6 @@
     margin-bottom: 10px; 
 }
 
-.hero-card button {
-    width: 90%; 
-    padding: 8px 5px;
-    background-color: #2421d1; 
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: background-color 0.3s ease;
-}
-
-.hero-card button:hover {
-    background-color: #1b0a77; 
-}
-
-
 .imgHero,
 .imgMonster{
     width: 250px;
@@ -134,16 +117,17 @@
 .System{ color: green; }
 
 body {
-    font-family: sans-serif;
+    font-family: 'Times New Roman', Times, serif;
     margin: 0;
     padding: 0;
     background-color: #f0f2f5;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh; 
+    min-height: 100vh;
+    
+    padding-top: 70px; 
 }
-
 h1 {
     margin-top: 20px;
     color: #333;
@@ -198,3 +182,112 @@ h1 {
     max-height: 90%;
     object-fit: contain;
 }
+h3.stage-number {
+    font-size: 1.8em;        
+    font-weight: bold;       
+    color: #333;            
+    text-align: center;  
+    letter-spacing: 1px;     
+}
+
+body.dark-mode h3.stage-number {
+    color: #e0e0e0;
+}
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    align-items: center;
+    padding: 10px 10px;
+    text-align: center; 
+    background-color: #e0e0e0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    display: flex;           
+    justify-content: center; 
+    align-items: center;     
+    gap: 20px;
+    display: flex;
+    align-items: center; 
+    height: 50px;
+}
+
+
+.AttackButton,
+.AutoButton,
+.hero-card button {
+    background-color: #E67E22;
+    color: white;
+    
+    padding: 10px 18px;
+    margin: 5px;
+    font-size: 1em;
+    font-weight: bold;
+
+    border: none;
+    border-radius: 5px;
+
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.AttackButton:hover,
+.AutoButton:hover,
+.hero-card button {
+    background-color: #D35400; 
+}
+
+.AttackButton:active,
+.AutoButton:active {
+    transform: translateY(2px);
+}
+
+.AttackButton:disabled,
+.AutoButton:disabled {
+    background-color: #A04000; 
+    color: #FAD7A0;          
+    cursor: not-allowed;       
+    transform: none;           
+}
+
+body.dark-mode {
+    background-color: #121212; 
+    color: #e0e0e0;            
+}
+
+body.dark-mode h1 {
+    color: hsl(0, 0%, 88%);
+}
+
+body.dark-mode .hero-card,
+body.dark-mode #char,
+body.dark-mode #monster,
+body.dark-mode .Buff-Card,
+body.dark-mode nav {
+    background-color: #1E1E1E; 
+    border-color: #444;      
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .log {
+    background-color: #1E1E1E;
+    border-color: #444;
+}
+
+body.dark-mode .heroi { 
+    color: #58a6ff; 
+}
+body.dark-mode .monster{ 
+    color: #ff7b72; 
+}
+body.dark-mode .System{ 
+    color: #7ee787; 
+}
+
+body.dark-mode .Lifebar {
+    border-color: #666; 
+}
+
+

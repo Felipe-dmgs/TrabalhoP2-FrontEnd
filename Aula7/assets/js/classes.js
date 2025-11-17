@@ -184,9 +184,9 @@ class Log {
     constructor(listEL){
         this.listEL = listEL;
     }
-
+    // Usei o unshift para a mensagem mais recente aparecer em cima e as antigas irem descendo assim a pessoa n tem que tirar zoom ou ficar scrollando a pagina
     addMessage(msg, classP){
-        this.list.push({ msg, classP });
+        this.list.unshift({ msg, classP });
         this.render();
     }
     Reset(){
@@ -223,6 +223,8 @@ class Stage {
         this.isAutoMode = false;       
         this.autoBattleInterval = null;
         this.bossIntroGifEL = BossIntroGifEL;
+        this.TituloFase = document.querySelector(".stage-number")
+        this.DarkModeButton = document.querySelector("#dark-mode-toggle");
     }
 
     start(){
@@ -242,13 +244,14 @@ class Stage {
         this.turno = true;
         this.fighter1EL.querySelector(".AttackButton").disabled = false;
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
-
+        this.DarkModeButton.addEventListener("click", () => {document.body.classList.toggle("dark-mode");})
         this.update()
     }
 
     playBossIntroGif() {
         this.fightArena.style.display = "none";
         this.buffScreenEL.style.display = "none";
+        this.TituloFase.innerHTML = "Fase Final"
         const imgElement = this.bossIntroGifEL.querySelector("img");
         imgElement.src = "assets/Images/GanondorfEntering.webp";
         this.bossIntroGifEL.style.display = "flex";
@@ -289,6 +292,7 @@ class Stage {
     goToNextMonster() {
         this.log.addMessage(`${this.fighter2.name} foi derrotado!`, "System");
         this.currentMonsterIndex++;
+        this.TituloFase.innerHTML = `Fase ${this.currentMonsterIndex+1}`
         if (this.currentMonsterIndex >= this.monsters.length) {
             this.log.addMessage("PARABÉNS! Você derrotou todos os monstros!", "System");
             this.endGame();
@@ -298,6 +302,7 @@ class Stage {
                 this.toggleAutoMode();
             }
             this.log.addMessage(`Escolha um buff para se preparar!`, "System");
+            this.TituloFase.innerHTML = "Fase de Preparação"
             this.fightArena.style.display = "none";
             this.buffScreenEL.style.display = "block"; 
             const handleBuffSelection = (buff) => {
