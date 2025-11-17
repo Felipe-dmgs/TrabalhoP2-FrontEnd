@@ -55,7 +55,7 @@ class Assassin extends Character{
         this.Defense = 15;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
-        this._image.src = "assets/Images/ladino.jpg";
+        this._image.src = "assets/Images/ladino.png";
     }
     get image(){
         return this._image
@@ -69,7 +69,7 @@ class Lancer extends Character{
         this.Defense = 60;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
-        this._image.src = "assets/Images/lancerHero.jpg";
+        this._image.src = "assets/Images/LancerHero.png";
     }
     get image(){
         return this._image
