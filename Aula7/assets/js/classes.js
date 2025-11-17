@@ -407,6 +407,12 @@ class Stage {
             }
         } else {
             this.log.addMessage(`${attacked.name} conseguiu defender o ataque de ${attacking.name}`,`${this.defesa}`);
+            let recuperaVida = this.buffSelector.obterNumeroAleatorio(0,100);
+            if(attacked.life == attacked.MaxLife){this.log.addMessage(`O ${attacked.name} esta com a vida cheia e conseguiu se defender de todos os ataques do oponente`,"System")} 
+            else{
+                if((recuperaVida + attacked.life) >= parseFloat(attacked.MaxLife)){attacked.life += recuperaVida; this.log.addMessage(`O ${attacked.name} recuperou ${recuperaVida} de vida com sua defesa`, 'System')}
+                else{this.log.addMessage(`O ${attacked.name} recuperou ${parseFloat(attacked.MaxLife) - attacked.life} pontos de vida`,"System");attacked.life = parseFloat(attacked.MaxLife);}
+            }
         }
 
         if (this.fighter1.life <= 0) {
