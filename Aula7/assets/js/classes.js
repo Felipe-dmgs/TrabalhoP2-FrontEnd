@@ -21,9 +21,9 @@ class Character{
 class Knight extends Character{
     constructor(name){
         super(name);
-        this.life = 110;
-        this.Attack = 20;
-        this.Defense = 15;
+        this.life = 100;
+        this.Attack = 30;
+        this.Defense = 20;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/hero.jpg";
@@ -36,9 +36,9 @@ class Knight extends Character{
 class Sorcerer extends Character{
     constructor(name){
         super(name);
-        this.life = 70;
-        this.Attack = 30;
-        this.Defense = 3;
+        this.life = 90;
+        this.Attack = 50;
+        this.Defense = 10;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/sorcerer.webp";
@@ -47,12 +47,12 @@ class Sorcerer extends Character{
         return this._image
     }
 }
-class Ladino extends Character{
+class Assassin extends Character{
     constructor(name){
         super(name);
-        this.life = 90;
-        this.Attack = 25;
-        this.Defense = 5;
+        this.life = 100;
+        this.Attack = 35;
+        this.Defense = 15;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/ladino.jpg";
@@ -64,9 +64,9 @@ class Ladino extends Character{
 class Lancer extends Character{
     constructor(name){
         super(name);
-        this.life = 100;
-        this.Attack = 20;
-        this.Defense = 20;
+        this.life = 60;
+        this.Attack = 30;
+        this.Defense = 60;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/lancerHero.jpg";
@@ -78,9 +78,9 @@ class Lancer extends Character{
 class Archer extends Character{
     constructor(name){
         super(name);
-        this.life = 70;
-        this.Attack = 25;
-        this.Defense = 10;
+        this.life = 90;
+        this.Attack = 40;
+        this.Defense = 20;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/ArcherHero.jpg";
@@ -93,9 +93,9 @@ class Archer extends Character{
 class LittleMonster extends Character{
     constructor(){
         super("Little Monster")
-        this.life = 40;
-        this.Attack = 4;
-        this.Defense = 4;
+        this.life = 80;
+        this.Attack = 10;
+        this.Defense = 10;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/littlemonster.jpg";
@@ -107,9 +107,9 @@ class LittleMonster extends Character{
 class BatMonster extends Character{
     constructor(){
         super("Bat monster")
-        this.life = 60;
-        this.Attack = 12;
-        this.Defense = 20;
+        this.life = 80;
+        this.Attack = 30;
+        this.Defense = 30;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/BatMonster.png";
@@ -122,8 +122,8 @@ class Lizard extends Character{
     constructor(){
         super("Lizard")
         this.life = 120;
-        this.Attack = 24;
-        this.Defense = 36;
+        this.Attack = 25;
+        this.Defense = 40;
         this.MaxLife = this.life;
         this._image = document.createElement("img");
         this._image.src = "assets/Images/LizardMonster.png";
@@ -224,7 +224,7 @@ class Stage {
         this.autoBattleInterval = null;
         this.bossIntroGifEL = BossIntroGifEL;
         this.TituloFase = document.querySelector(".stage-number")
-        this.navbar = document.querySelector(".navbar");
+        this.navbar = document.querySelector(".nav");
     }
 
     start(){
@@ -266,14 +266,13 @@ class Stage {
         this.isAutoMode = !this.isAutoMode;
 
         if (this.isAutoMode) {
-            this.log.addMessage("Modo Automático ATIVADO", "System");
-            this.fighter1EL.querySelector(".AttackButton").disabled = true;
-            this.autoBattleInterval = setInterval(() => {
-                
-                if (this.fighter1.life <= 0 || this.fighter2.life <= 0) {
+            if (this.fighter1.life <= 0 || this.fighter2.life <= 0) {
                     this.toggleAutoMode(); 
                     return;
                 }
+            this.log.addMessage("Modo Automático ATIVADO", "System");
+            this.fighter1EL.querySelector(".AttackButton").disabled = true;
+            this.autoBattleInterval = setInterval(() => {
                 if (this.turno) {
                     this.DoAttack(this.fighter1, this.fighter2);
                 } else {
@@ -292,9 +291,7 @@ class Stage {
         }
     }
     goToNextMonster() {
-        this.log.addMessage(`${this.fighter2.name} foi derrotado!`, "System");
         this.currentMonsterIndex++;
-        this.TituloFase.innerHTML = `Fase ${this.currentMonsterIndex+1}`
         if (this.currentMonsterIndex >= this.monsters.length) {
             this.log.addMessage("PARABÉNS! Você derrotou todos os monstros!", "System");
             this.endGame();
@@ -303,6 +300,7 @@ class Stage {
             if (this.isAutoMode) {
                 this.toggleAutoMode();
             }
+            this.log.addMessage(`${this.fighter2.name} foi derrotado!`, "System");
             this.log.addMessage(`Escolha um buff para se preparar!`, "System");
             this.TituloFase.innerHTML = "Fase de Preparação"
             this.fightArena.style.display = "none";
@@ -324,19 +322,12 @@ class Stage {
                 this.resumeNextMonster();
             };
             this.buffSelector.CreateBuffSelection(this.buffListEL, handleBuffSelection);
-            
         }
     }
-
-    AutoMode() {
-        this.AutoMode = !this.AutoMode
-        while(this.AutoMode){this.DoAttack(this.fighter1, this.fighter2); setTimeout(() => {this.DoAttack(this.fighter2, this.fighter1);})}
-    }
-
     resumeNextMonster() {
         this.update();
         this.fighter1.life = this.fighter1.MaxLife; 
-        
+        this.TituloFase.innerHTML = `Fase ${this.currentMonsterIndex+1}`
         this.fighter2 = this.monsters[this.currentMonsterIndex];
         if (this.monsters[this.currentMonsterIndex] instanceof Boss) {
                 this.log.addMessage("Uma aura maligna preenche o ar... O grande demônio surge!", "Monster");
@@ -351,6 +342,7 @@ class Stage {
         f2ImgContainer.appendChild(this.fighter2.image);
 
         this.MonsterDamage = [];
+        this.PlayerDamage = []
         this.turno = true;
         this.fighter1EL.querySelector(".AttackButton").disabled = false;
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
@@ -360,9 +352,10 @@ class Stage {
 
     
     endGame() {
+        this.update();
         this.fighter1EL.querySelector(".AttackButton").disabled = true;
         this.fighter2EL.querySelector(".AttackButton").disabled = true;
-        this.log.addMessage(`Você deu um total de ${this.PlayerDamage.reduce((acumulador, valorAtual) => acumulador + valorAtual, 0).toFixed(2)} com uma média de ${(this.PlayerDamage.reduce((acumulador, valorAtual) => acumulador + valorAtual, 0)/this.PlayerDamage.length).toFixed(2)} dano por hit`)
+        this.log.addMessage(`Você deu um total de ${this.PlayerDamage.reduce((acumulador, valorAtual) => acumulador + valorAtual, 0).toFixed(2)} com uma média de ${(this.PlayerDamage.reduce((acumulador, valorAtual) => acumulador + valorAtual, 0)/this.PlayerDamage.length).toFixed(2)} dano por hit`,"System")
         this.log.addMessage("FIM DE JOGO. Atualize a página para jogar novamente.", "System");
     }
 
@@ -454,7 +447,7 @@ class Stage {
 }
 class SelectHero {
     constructor(){
-        this.personagens = [Knight, Sorcerer, Ladino, Archer, Lancer]
+        this.personagens = [Knight, Sorcerer, Assassin, Archer, Lancer]
     }
 
     CreateSelection(objetolista, FuncaoStart){
@@ -493,7 +486,7 @@ class SelectBuffs {
     }
     obterRaridade(){
         let numRaridade = this.obterNumeroAleatorio(0,21)
-        if (numRaridade <= 12){return "comum";}
+        if (numRaridade <= 10){return "comum";}
         else if(numRaridade <= 16) {return "raro"}
         else if(numRaridade <= 19){return "épico"}
         else if(numRaridade == 20){return "lendário"}
